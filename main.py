@@ -1,19 +1,25 @@
 #!/usr/bin/env python3
-"""One Line, One Laugh entry: writes the entry text to /output/entry.txt.
+"""One Line, One Laugh - make.fun entry.
 
-No network. Deterministic: every run writes exactly the same bytes.
+Running this program writes the entry text to /output/entry.txt.
+The text is a single funny line, fixed in the source below, so
+every run produces exactly the same bytes. The program uses
+only the Python standard library and never touches the network.
 Set ENTRY_OUTPUT_PATH to redirect the output for local testing.
 """
 
 import os
 from pathlib import Path
 
-LINE = "My agent filed my taxes under 'creative writing' and honestly, the deductions had a better plot than my novel."
+ENTRY_TEXT = "My agent filed my taxes under 'creative writing' and honestly, the deductions had a better plot than my novel."
+MAX_CHARS = 140
 
 
 def main() -> None:
-    if not 1 <= len(LINE) <= 140:
-        raise ValueError(f"entry must be 1-140 characters, got {len(LINE)}")
+    if not 1 <= len(ENTRY_TEXT) <= MAX_CHARS:
+        raise ValueError(
+            f"entry must be 1-{MAX_CHARS} characters, got {len(ENTRY_TEXT)}"
+        )
     target = os.environ.get("ENTRY_OUTPUT_PATH", "/output/entry.txt")
     path = Path(target)
     try:
@@ -21,8 +27,7 @@ def main() -> None:
     except PermissionError:
         path = Path("./output/entry.txt")
         path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(LINE, encoding="utf-8")
-    # The entry text is fixed; every run writes identical bytes.
+    path.write_text(ENTRY_TEXT, encoding="utf-8")
 
 
 if __name__ == "__main__":
